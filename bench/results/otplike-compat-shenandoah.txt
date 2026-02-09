@@ -1,0 +1,259 @@
+==============================================
+Benchmark Configuration
+==============================================
+GC:         Shenandoah
+Impl:       otplike-compat
+Benchmark:  all
+==============================================
+
+=== OTPLIKE VIA LOOM-OTP COMPAT LAYER BENCHMARKS (GC: Shenandoah) ===
+========================================
+otplike via loom-otp compat benchmarks
+JVM: 25.0.1
+GC: Shenandoah Pauses
+Heap max: 8192 MB
+Available processors: 22
+OS: Linux amd64
+========================================
+
+
+=== SPAWN BENCHMARKS ===
+Warming up (6 iterations)...
+spawn-immediate-exit n=1000                               13032.11 proc/sec
+spawn-immediate-exit n=10000                              49887.65 proc/sec
+spawn-immediate-exit n=100000                             78974.57 proc/sec
+spawn-wait-exit n=1000                                    68835.42 proc/sec
+spawn-wait-exit n=10000                                   80178.87 proc/sec
+spawn-wait-exit n=100000                                  91439.53 proc/sec
+spawn-tree depth=10 procs=1023                            44844.23 proc/sec
+spawn-tree depth=15 procs=32767                          124838.00 proc/sec
+spawn-tree depth=18 procs=262143                         108669.12 proc/sec
+spawn-immediate-exit n=1000                               30743.46 proc/sec
+spawn-immediate-exit n=10000                              36663.73 proc/sec
+spawn-immediate-exit n=100000                             70933.66 proc/sec
+spawn-wait-exit n=1000                                    76741.46 proc/sec
+spawn-wait-exit n=10000                                   76518.88 proc/sec
+spawn-wait-exit n=100000                                  82965.39 proc/sec
+spawn-tree depth=10 procs=1023                           291519.10 proc/sec
+spawn-tree depth=15 procs=32767                          368102.55 proc/sec
+spawn-tree depth=18 procs=262143                         138353.25 proc/sec
+spawn-immediate-exit n=1000                               42137.10 proc/sec
+spawn-immediate-exit n=10000                              34534.82 proc/sec
+spawn-immediate-exit n=100000                             79808.37 proc/sec
+spawn-wait-exit n=1000                                    91412.78 proc/sec
+spawn-wait-exit n=10000                                   88707.80 proc/sec
+spawn-wait-exit n=100000                                  91068.63 proc/sec
+spawn-tree depth=10 procs=1023                           399750.54 proc/sec
+spawn-tree depth=15 procs=32767                          377618.38 proc/sec
+spawn-tree depth=18 procs=262143                         144071.08 proc/sec
+spawn-immediate-exit n=1000                               45944.55 proc/sec
+spawn-immediate-exit n=10000                              43728.77 proc/sec
+spawn-immediate-exit n=100000                             78067.59 proc/sec
+spawn-wait-exit n=1000                                    88439.91 proc/sec
+spawn-wait-exit n=10000                                   78903.22 proc/sec
+spawn-wait-exit n=100000                                  90025.09 proc/sec
+spawn-tree depth=10 procs=1023                           368875.29 proc/sec
+spawn-tree depth=15 procs=32767                          464017.78 proc/sec
+spawn-tree depth=18 procs=262143                         141624.10 proc/sec
+spawn-immediate-exit n=1000                               19016.37 proc/sec
+spawn-immediate-exit n=10000                              39859.57 proc/sec
+spawn-immediate-exit n=100000                             83570.08 proc/sec
+spawn-wait-exit n=1000                                    84747.64 proc/sec
+spawn-wait-exit n=10000                                   89483.85 proc/sec
+spawn-wait-exit n=100000                                  91305.67 proc/sec
+spawn-tree depth=10 procs=1023                           388994.24 proc/sec
+spawn-tree depth=15 procs=32767                          506249.18 proc/sec
+spawn-tree depth=18 procs=262143                         141559.97 proc/sec
+spawn-immediate-exit n=1000                               34708.28 proc/sec
+spawn-immediate-exit n=10000                              60390.32 proc/sec
+spawn-immediate-exit n=100000                             87037.92 proc/sec
+spawn-wait-exit n=1000                                    95974.68 proc/sec
+spawn-wait-exit n=10000                                   95015.14 proc/sec
+spawn-wait-exit n=100000                                  94128.10 proc/sec
+spawn-tree depth=10 procs=1023                           329388.61 proc/sec
+spawn-tree depth=15 procs=32767                          484254.40 proc/sec
+spawn-tree depth=18 procs=262143                         149287.67 proc/sec
+Warm-up complete.
+
+--- Immediate Exit (fire-and-forget) ---
+spawn-immediate-exit n=1000                               72558.21 proc/sec
+spawn-immediate-exit n=10000                              85195.47 proc/sec
+spawn-immediate-exit n=100000                             86776.80 proc/sec
+
+--- Wait for Exit (synchronized) ---
+spawn-wait-exit n=1000                                    85419.80 proc/sec
+spawn-wait-exit n=10000                                   89007.09 proc/sec
+spawn-wait-exit n=100000                                 101808.42 proc/sec
+
+--- Sequential (latency) ---
+spawn-sequential n=100                                        0.02 ms/spawn
+spawn-sequential n=1000                                       0.02 ms/spawn
+spawn-sequential n=10000                                      0.02 ms/spawn
+
+--- Process Tree ---
+spawn-tree depth=10 procs=1023                           362728.14 proc/sec
+spawn-tree depth=15 procs=32767                          487995.70 proc/sec
+spawn-tree depth=18 procs=262143                         155035.17 proc/sec
+
+--- Linked Process Tree ---
+spawn-link-tree depth=10 procs=1023                       61917.77 proc/sec
+spawn-link-tree depth=15 procs=32767                     191179.70 proc/sec
+spawn-link-tree depth=18 procs=262143                     94541.50 proc/sec
+
+
+=== MEMORY BENCHMARKS ===
+Warming up (6 iterations)...
+baseline (no procs)                                          16.00 MB
+idle-procs n=1000                                            24.25 MB (8.45 KB/proc)
+idle-procs n=10000                                           94.02 MB (7.99 KB/proc)
+idle-procs n=50000                                          400.00 MB (7.86 KB/proc)
+gc-pressure n=10000                                         106.00 ms total (16.01 MB final)
+baseline (no procs)                                          16.02 MB
+idle-procs n=1000                                            24.80 MB (8.99 KB/proc)
+idle-procs n=10000                                           94.02 MB (7.99 KB/proc)
+idle-procs n=50000                                          400.00 MB (7.86 KB/proc)
+gc-pressure n=10000                                         101.00 ms total (16.02 MB final)
+baseline (no procs)                                          16.02 MB
+idle-procs n=1000                                            24.00 MB (8.18 KB/proc)
+idle-procs n=10000                                           94.02 MB (7.99 KB/proc)
+idle-procs n=50000                                          396.00 MB (7.78 KB/proc)
+gc-pressure n=10000                                          93.00 ms total (16.02 MB final)
+baseline (no procs)                                          16.02 MB
+idle-procs n=1000                                            24.00 MB (8.17 KB/proc)
+idle-procs n=10000                                           92.00 MB (7.78 KB/proc)
+idle-procs n=50000                                          396.00 MB (7.78 KB/proc)
+gc-pressure n=10000                                         103.00 ms total (16.02 MB final)
+baseline (no procs)                                          16.02 MB
+idle-procs n=1000                                            24.00 MB (8.17 KB/proc)
+idle-procs n=10000                                           95.02 MB (8.09 KB/proc)
+idle-procs n=50000                                          400.00 MB (7.86 KB/proc)
+gc-pressure n=10000                                         103.00 ms total (16.02 MB final)
+baseline (no procs)                                          16.02 MB
+idle-procs n=1000                                            24.00 MB (8.17 KB/proc)
+idle-procs n=10000                                           92.00 MB (7.78 KB/proc)
+idle-procs n=50000                                          404.00 MB (7.95 KB/proc)
+gc-pressure n=10000                                         106.00 ms total (16.02 MB final)
+Warm-up complete.
+baseline (no procs)                                          16.02 MB
+
+--- Idle Processes ---
+idle-procs n=1000                                            24.00 MB (8.17 KB/proc)
+idle-procs n=10000                                           92.00 MB (7.78 KB/proc)
+idle-procs n=50000                                          400.00 MB (7.86 KB/proc)
+
+--- Spawn/Exit Cycles (n=10000) ---
+baseline before cycles                                       16.03 MB
+after cycle 1                                                16.03 MB (delta: 0.01)
+after cycle 2                                                16.04 MB (delta: 0.02)
+after cycle 3                                                16.05 MB (delta: 0.02)
+after cycle 4                                                16.05 MB (delta: 0.03)
+after cycle 5                                                16.06 MB (delta: 0.03)
+
+--- Message Queue Growth ---
+queued-messages n=1000                                       16.58 MB (541 bytes/msg)
+queued-messages n=10000                                      16.85 MB (28 bytes/msg)
+queued-messages n=100000                                     17.11 MB (3 bytes/msg)
+
+--- Context Accumulation ---
+context-accumulation n=10000                                 16.05 MB (delta: 0.01)
+
+--- GC Pressure ---
+gc-pressure n=1000                                           11.00 ms total (16.05 MB final)
+gc-pressure n=10000                                         107.00 ms total (16.05 MB final)
+gc-pressure n=50000                                         513.00 ms total (16.05 MB final)
+
+
+=== MESSAGING BENCHMARKS ===
+Warming up (6 iterations)...
+ping-pong n=1000                                              3.07 us/msg (326174 msg/sec)
+ping-pong n=10000                                             2.72 us/msg (367627 msg/sec)
+ping-pong n=100000                                            2.13 us/msg (468696 msg/sec)
+send-throughput n=10000                                 6504788.50 msg/sec
+send-throughput n=100000                                8955818.71 msg/sec
+send-throughput n=1000000                              14466465.54 msg/sec
+many-to-one senders=10 msgs-each=10000                  1628938.10 msg/sec
+ping-pong n=1000                                              4.17 us/msg (239689 msg/sec)
+ping-pong n=10000                                             1.74 us/msg (575934 msg/sec)
+ping-pong n=100000                                            1.42 us/msg (706306 msg/sec)
+send-throughput n=10000                                 7363737.72 msg/sec
+send-throughput n=100000                               11887147.70 msg/sec
+send-throughput n=1000000                              13039790.10 msg/sec
+many-to-one senders=10 msgs-each=10000                  1745437.57 msg/sec
+ping-pong n=1000                                              2.00 us/msg (500064 msg/sec)
+ping-pong n=10000                                             1.61 us/msg (621416 msg/sec)
+ping-pong n=100000                                            1.34 us/msg (746478 msg/sec)
+send-throughput n=10000                                12195657.37 msg/sec
+send-throughput n=100000                               15411953.82 msg/sec
+send-throughput n=1000000                              14410973.23 msg/sec
+many-to-one senders=10 msgs-each=10000                  1958110.65 msg/sec
+ping-pong n=1000                                              1.63 us/msg (615256 msg/sec)
+ping-pong n=10000                                             1.43 us/msg (697813 msg/sec)
+ping-pong n=100000                                            1.36 us/msg (735789 msg/sec)
+send-throughput n=10000                                11211026.27 msg/sec
+send-throughput n=100000                               14669347.05 msg/sec
+send-throughput n=1000000                              14066006.08 msg/sec
+many-to-one senders=10 msgs-each=10000                  2035114.14 msg/sec
+ping-pong n=1000                                              2.43 us/msg (411546 msg/sec)
+ping-pong n=10000                                             1.34 us/msg (744736 msg/sec)
+ping-pong n=100000                                            1.38 us/msg (723125 msg/sec)
+send-throughput n=10000                                12427408.40 msg/sec
+send-throughput n=100000                               14429087.89 msg/sec
+send-throughput n=1000000                              14091406.27 msg/sec
+many-to-one senders=10 msgs-each=10000                  1898518.89 msg/sec
+ping-pong n=1000                                              1.53 us/msg (653681 msg/sec)
+ping-pong n=10000                                             1.32 us/msg (759872 msg/sec)
+ping-pong n=100000                                            1.37 us/msg (727751 msg/sec)
+send-throughput n=10000                                11965644.24 msg/sec
+send-throughput n=100000                               15038518.91 msg/sec
+send-throughput n=1000000                              14126973.12 msg/sec
+many-to-one senders=10 msgs-each=10000                  1854308.95 msg/sec
+Warm-up complete.
+
+--- Ping-Pong (latency) ---
+ping-pong n=1000                                              1.87 us/msg (535859 msg/sec)
+ping-pong n=10000                                             1.40 us/msg (712386 msg/sec)
+ping-pong n=100000                                            1.38 us/msg (727154 msg/sec)
+
+--- Send Throughput ---
+send-throughput n=10000                                11784448.30 msg/sec
+send-throughput n=100000                               14721794.88 msg/sec
+send-throughput n=1000000                              14470003.63 msg/sec
+
+--- Receive Throughput ---
+receive-throughput n=10000                              2414815.57 msg/sec
+receive-throughput n=100000                             3856186.61 msg/sec
+receive-throughput n=1000000                            5047610.09 msg/sec
+
+--- Selective Receive - Best Case (first) ---
+selective-recv-first q=100                                    2.64 ms
+selective-recv-first q=1000                                   1.89 ms
+selective-recv-first q=10000                                  4.47 ms
+
+--- Selective Receive - Worst Case (last) ---
+selective-recv-last q=100                                     0.61 ms
+selective-recv-last q=1000                                    1.37 ms
+selective-recv-last q=10000                                   4.70 ms
+
+--- Selective Receive - Miss (timeout) ---
+selective-recv-miss q=100 (timeout=100ms)                   101.12 ms
+selective-recv-miss q=1000 (timeout=100ms)                  101.72 ms
+selective-recv-miss q=10000 (timeout=100ms)                 104.86 ms
+
+--- Selective Receive - Repeated ---
+selective-recv-repeated q=1000 n=100                          0.16 ms/recv
+
+--- Many-to-One ---
+many-to-one senders=10 msgs-each=10000                  1865148.74 msg/sec
+many-to-one senders=100 msgs-each=1000                  1381655.29 msg/sec
+
+--- One-to-Many ---
+one-to-many receivers=10 msgs-each=10000                 811783.83 msg/sec
+one-to-many receivers=100 msgs-each=1000                1369017.56 msg/sec
+
+========================================
+otplike via loom-otp compat benchmarks complete
+========================================
+
+==============================================
+Benchmarks complete
+==============================================

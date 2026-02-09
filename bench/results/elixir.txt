@@ -1,0 +1,134 @@
+==============================================
+Benchmark Configuration
+==============================================
+GC:         G1GC
+Impl:       elixir
+Benchmark:  all
+==============================================
+
+=== ELIXIR/BEAM BENCHMARKS ===
+========================================
+Elixir/BEAM benchmarks
+Erlang/OTP: 28
+ERTS: 16.2
+Elixir: 1.19.4
+Schedulers: 22
+BEAM memory: 49 MB
+Word size: 64 bits
+OS: unix linux
+========================================
+
+
+=== SPAWN BENCHMARKS ===
+
+--- Immediate Exit (fire-and-forget) ---
+spawn-immediate-exit n=1000                              718148.84 proc/sec
+spawn-immediate-exit n=10000                            1103761.04 proc/sec
+spawn-immediate-exit n=100000                           1350243.86 proc/sec
+
+--- Wait for Exit (synchronized) ---
+spawn-wait-exit n=1000                                  1065945.80 proc/sec
+spawn-wait-exit n=10000                                  854230.22 proc/sec
+spawn-wait-exit n=100000                                 344147.38 proc/sec
+
+--- Sequential (latency) ---
+spawn-sequential n=100                                        0.00 ms/spawn
+spawn-sequential n=1000                                       0.00 ms/spawn
+spawn-sequential n=10000                                      0.00 ms/spawn
+
+--- Process Tree ---
+spawn-tree depth=10 procs=2047                          1778110.56 proc/sec
+spawn-tree depth=15 procs=65535                         4151601.92 proc/sec
+spawn-tree depth=18 procs=524287                        3705492.45 proc/sec
+
+--- Linked Process Tree ---
+spawn-link-tree depth=10 procs=2047                      985796.73 proc/sec
+spawn-link-tree depth=15 procs=65535                    2744866.05 proc/sec
+spawn-link-tree depth=18 procs=524287                   2691071.27 proc/sec
+
+--- Monitored Spawns ---
+spawn-monitored n=1000                                   373070.29 proc/sec
+spawn-monitored n=10000                                  410536.20 proc/sec
+spawn-monitored n=100000                                 438240.48 proc/sec
+
+
+=== MEMORY BENCHMARKS ===
+baseline (system started, no procs)                          67.68 MB
+
+--- Idle Processes ---
+idle-procs n=1000                                            69.81 MB (2.18 KB/proc)
+idle-procs n=10000                                           91.61 MB (2.45 KB/proc)
+idle-procs n=50000                                          191.83 MB (2.54 KB/proc)
+
+--- Spawn/Exit Cycles (n=10000) ---
+baseline before cycles                                       68.25 MB
+after cycle 1                                                67.41 MB (delta: -0.83)
+after cycle 2                                                67.75 MB (delta: -0.5)
+after cycle 3                                                67.76 MB (delta: -0.49)
+after cycle 4                                                66.62 MB (delta: -1.63)
+after cycle 5                                                66.92 MB (delta: -1.33)
+
+--- Message Queue Growth ---
+queued-messages n=1000                                       67.22 MB (81 bytes/msg)
+queued-messages n=10000                                      69.05 MB (206 bytes/msg)
+queued-messages n=100000                                     97.22 MB (324 bytes/msg)
+
+--- Context Accumulation ---
+context-accumulation n=10000                                 65.09 MB (delta: -0.2)
+
+--- GC Pressure ---
+gc-pressure n=1000                                            3.00 ms total (63.13 MB final)
+gc-pressure n=10000                                           9.00 ms total (62.9 MB final)
+gc-pressure n=50000                                          43.00 ms total (63.14 MB final)
+
+
+=== MESSAGING BENCHMARKS ===
+
+--- Ping-Pong (latency) ---
+ping-pong n=1000                                              0.31 us/msg (3198925 msg/sec)
+ping-pong n=10000                                             0.27 us/msg (3679623 msg/sec)
+ping-pong n=100000                                            0.28 us/msg (3606579 msg/sec)
+
+--- Send Throughput ---
+send-throughput n=10000                                 4379459.11 msg/sec
+send-throughput n=100000                                5442068.18 msg/sec
+send-throughput n=1000000                               5096681.71 msg/sec
+
+--- Receive Throughput ---
+receive-throughput n=10000                             18309518.75 msg/sec
+receive-throughput n=100000                             5762542.89 msg/sec
+receive-throughput n=1000000                            7376679.28 msg/sec
+
+--- Selective Receive - Best Case (first) ---
+selective-recv-first q=100                                    0.00 ms
+selective-recv-first q=1000                                   0.00 ms
+selective-recv-first q=10000                                  0.00 ms
+
+--- Selective Receive - Worst Case (last) ---
+selective-recv-last q=100                                     0.00 ms
+selective-recv-last q=1000                                    0.00 ms
+selective-recv-last q=10000                                   0.06 ms
+
+--- Selective Receive - Miss (timeout) ---
+selective-recv-miss q=100 (timeout=100ms)                   100.35 ms
+selective-recv-miss q=1000 (timeout=100ms)                  100.52 ms
+selective-recv-miss q=10000 (timeout=100ms)                 100.71 ms
+
+--- Selective Receive - Repeated ---
+selective-recv-repeated q=1000 n=100                          0.00 ms/recv
+
+--- Many-to-One ---
+many-to-one senders=10 msgs-each=10000                  1853457.32 msg/sec
+many-to-one senders=100 msgs-each=1000                  1758254.77 msg/sec
+
+--- One-to-Many ---
+one-to-many receivers=10 msgs-each=10000                1993083.48 msg/sec
+one-to-many receivers=100 msgs-each=1000                1714213.17 msg/sec
+
+========================================
+Elixir/BEAM benchmarks complete
+========================================
+
+==============================================
+Benchmarks complete
+==============================================

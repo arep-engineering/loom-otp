@@ -1,0 +1,180 @@
+=== LOOM-OTP BENCHMARKS ===
+========================================
+loom-otp benchmarks
+JVM: 21.0.9
+Heap max: 2048 MB
+Available processors: 22
+OS: Linux amd64
+========================================
+=== SPAWN BENCHMARKS ===
+--- Immediate Exit (fire-and-forget) ---
+spawn-immediate-exit n=1000                               13564.07 proc/sec
+spawn-immediate-exit n=10000                              40686.93 proc/sec
+spawn-immediate-exit n=100000                             68904.71 proc/sec
+--- Async Spawn ---
+spawn-async n=1000                                        88784.32 proc/sec
+spawn-async n=10000                                      160441.82 proc/sec
+spawn-async n=100000                                     207085.24 proc/sec
+--- Wait for Exit (synchronized) ---
+spawn-wait-exit n=1000                                    45348.47 proc/sec
+spawn-wait-exit n=10000                                   83362.46 proc/sec
+spawn-wait-exit n=100000                                  81276.21 proc/sec
+--- Sequential (latency) ---
+spawn-sequential n=100                                        0.02 ms/spawn
+spawn-sequential n=1000                                       0.01 ms/spawn
+spawn-sequential n=10000                                      0.02 ms/spawn
+--- Process Tree ---
+spawn-tree depth=10 procs=2047                           208116.97 proc/sec
+spawn-tree depth=15 procs=65535                          198534.66 proc/sec
+spawn-tree depth=18 procs=524287                          37402.38 proc/sec
+--- Linked Process Tree ---
+spawn-link-tree depth=10 procs=2047                       41258.42 proc/sec
+spawn-link-tree depth=15 procs=65535                      48168.39 proc/sec
+spawn-link-tree depth=18 procs=524287                     33686.95 proc/sec
+=== MEMORY BENCHMARKS ===
+baseline (system started, no procs)                          12.33 MB
+--- Idle Processes ---
+idle-procs n=1000                                            21.00 MB (8.87 KB/proc)
+idle-procs n=10000                                          102.46 MB (9.23 KB/proc)
+idle-procs n=50000                                          461.52 MB (9.20 KB/proc)
+--- Spawn/Exit Cycles (n=10000) ---
+baseline before cycles                                       11.83 MB
+after cycle 1                                                11.83 MB (delta: 0.00)
+after cycle 2                                                11.83 MB (delta: 0.00)
+after cycle 3                                                11.83 MB (delta: 0.00)
+after cycle 4                                                11.83 MB (delta: 0.00)
+after cycle 5                                                11.83 MB (delta: 0.00)
+--- Message Queue Growth ---
+queued-messages n=1000                                       11.84 MB (6 bytes/msg)
+queued-messages n=10000                                      11.84 MB (0 bytes/msg)
+queued-messages n=100000                                     11.84 MB (0 bytes/msg)
+--- Context Accumulation ---
+context-accumulation n=10000                                 11.84 MB (delta: 0.00)
+--- GC Pressure ---
+gc-pressure n=1000                                           18.00 ms total (11.84 MB final)
+gc-pressure n=10000                                         171.00 ms total (11.84 MB final)
+gc-pressure n=50000                                        1013.00 ms total (11.84 MB final)
+=== MESSAGING BENCHMARKS ===
+--- Ping-Pong (latency) ---
+ping-pong n=1000                                              4.13 us/msg (242291 msg/sec)
+ping-pong n=10000                                             3.41 us/msg (293670 msg/sec)
+ping-pong n=100000                                            2.78 us/msg (359605 msg/sec)
+--- Send Throughput ---
+send-throughput n=10000                                 3406804.48 msg/sec
+send-throughput n=100000                                4716459.21 msg/sec
+send-throughput n=1000000                               8651207.46 msg/sec
+--- Receive Throughput ---
+receive-throughput n=10000                              1744659.34 msg/sec
+receive-throughput n=100000                             3892884.94 msg/sec
+receive-throughput n=1000000                            8297101.55 msg/sec
+--- Selective Receive - Best Case (first) ---
+selective-recv-first q=100                                    1.76 ms
+selective-recv-first q=1000                                   0.92 ms
+selective-recv-first q=10000                                  2.84 ms
+--- Selective Receive - Worst Case (last) ---
+selective-recv-last q=100                                     0.31 ms
+selective-recv-last q=1000                                    0.89 ms
+selective-recv-last q=10000                                   6.71 ms
+--- Selective Receive - Miss (timeout) ---
+selective-recv-miss q=100 (timeout=100ms)                   102.66 ms
+selective-recv-miss q=1000 (timeout=100ms)                  101.13 ms
+selective-recv-miss q=10000 (timeout=100ms)                 104.70 ms
+--- Selective Receive - Repeated ---
+selective-recv-repeated q=1000 n=100                          0.14 ms/recv
+--- Many-to-One ---
+many-to-one senders=10 msgs-each=10000                  1269367.69 msg/sec
+many-to-one senders=100 msgs-each=1000                   862108.06 msg/sec
+--- One-to-Many ---
+one-to-many receivers=10 msgs-each=10000                 669328.55 msg/sec
+one-to-many receivers=100 msgs-each=1000                 857810.68 msg/sec
+========================================
+loom-otp benchmarks complete
+========================================
+=== OTPLIKE BENCHMARKS ===
+========================================
+otplike benchmarks
+JVM: 21.0.9
+Heap max: 2048 MB
+Available processors: 22
+OS: Linux amd64
+========================================
+=== SPAWN BENCHMARKS ===
+--- Immediate Exit (fire-and-forget) ---
+spawn-immediate-exit n=1000                               19312.31 proc/sec
+spawn-immediate-exit n=10000                              50470.06 proc/sec
+spawn-immediate-exit n=100000                            208352.13 proc/sec
+--- Wait for Exit (synchronized) ---
+spawn-wait-exit n=1000                                    97045.23 proc/sec
+spawn-wait-exit n=10000                                  198596.50 proc/sec
+spawn-wait-exit n=100000                                 251928.02 proc/sec
+--- Sequential (latency) ---
+spawn-sequential n=100                                        0.08 ms/spawn
+spawn-sequential n=1000                                       0.04 ms/spawn
+spawn-sequential n=10000                                      0.03 ms/spawn
+--- Process Tree ---
+spawn-tree depth=10 procs=1023                            31867.07 proc/sec
+spawn-tree depth=15 procs=32767                           53126.34 proc/sec
+spawn-tree depth=18 procs=262143                          46872.83 proc/sec
+--- Linked Process Tree ---
+spawn-link-tree depth=10 procs=1023                       27552.19 proc/sec
+spawn-link-tree depth=15 procs=32767                      41377.52 proc/sec
+spawn-link-tree depth=18 procs=262143                     43843.67 proc/sec
+=== MEMORY BENCHMARKS ===
+baseline (no procs)                                          17.29 MB
+--- Idle Processes ---
+idle-procs n=1000                                            19.51 MB (2.27 KB/proc)
+idle-procs n=10000                                           43.94 MB (2.73 KB/proc)
+idle-procs n=50000                                          152.52 MB (2.77 KB/proc)
+--- Spawn/Exit Cycles (n=10000) ---
+baseline before cycles                                       16.79 MB
+after cycle 1                                                16.80 MB (delta: 0.00)
+after cycle 2                                                16.80 MB (delta: 0.00)
+after cycle 3                                                16.80 MB (delta: 0.00)
+after cycle 4                                                16.80 MB (delta: 0.00)
+after cycle 5                                                16.80 MB (delta: 0.01)
+--- Message Queue Growth ---
+queued-messages n=1000                                       17.07 MB (286 bytes/msg)
+queued-messages n=10000                                      19.52 MB (285 bytes/msg)
+queued-messages n=100000                                     44.02 MB (285 bytes/msg)
+--- Context Accumulation ---
+context-accumulation n=10000                                 16.80 MB (delta: 0.00)
+--- GC Pressure ---
+gc-pressure n=1000                                           21.00 ms total (16.82 MB final)
+gc-pressure n=10000                                         139.00 ms total (16.96 MB final)
+gc-pressure n=50000                                         711.00 ms total (17.51 MB final)
+=== MESSAGING BENCHMARKS ===
+--- Ping-Pong (latency) ---
+ping-pong n=1000                                             20.96 us/msg (47715 msg/sec)
+ping-pong n=10000                                            10.32 us/msg (96936 msg/sec)
+ping-pong n=100000                                            9.62 us/msg (103961 msg/sec)
+--- Send Throughput ---
+send-throughput n=10000                                 3336648.85 msg/sec
+send-throughput n=100000                                4565349.72 msg/sec
+send-throughput n=1000000                               5762523.44 msg/sec
+--- Receive Throughput ---
+receive-throughput n=10000                               144094.79 msg/sec
+receive-throughput n=100000                              475437.32 msg/sec
+receive-throughput n=1000000                             664458.34 msg/sec
+--- Selective Receive - Best Case (first) ---
+selective-recv-first q=100                                    3.20 ms
+selective-recv-first q=1000                                   0.76 ms
+selective-recv-first q=10000                                  1.15 ms
+--- Selective Receive - Worst Case (last) ---
+selective-recv-last q=100                                     0.97 ms
+selective-recv-last q=1000                                    5.81 ms
+selective-recv-last q=10000                                  12.49 ms
+--- Selective Receive - Miss (timeout) ---
+selective-recv-miss q=100 (timeout=100ms)                    99.67 ms
+selective-recv-miss q=1000 (timeout=100ms)                  101.05 ms
+selective-recv-miss q=10000 (timeout=100ms)                 100.89 ms
+--- Selective Receive - Repeated ---
+selective-recv-repeated q=1000 n=100                          0.07 ms/recv
+--- Many-to-One ---
+many-to-one senders=10 msgs-each=10000                   121132.41 msg/sec
+many-to-one senders=100 msgs-each=1000                   109861.97 msg/sec
+--- One-to-Many ---
+one-to-many receivers=10 msgs-each=10000                 240881.15 msg/sec
+one-to-many receivers=100 msgs-each=1000                 252280.34 msg/sec
+========================================
+otplike benchmarks complete
+========================================

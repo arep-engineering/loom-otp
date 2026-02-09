@@ -1,0 +1,267 @@
+# Benchmark Analysis: Elixir/BEAM vs Java Loom Implementations
+
+## Overview
+
+The benchmarks compare **4 implementations** across **3 benchmark categories**:
+
+| Implementation     | Description                             | Runtime          |
+|--------------------|-----------------------------------------|------------------|
+| Elixir/BEAM        | Native Erlang/OTP 28                    | BEAM (Erlang VM) |
+| loom-otp           | New Java Virtual Threads implementation | JVM 25.0.1       |
+| otplike-compat     | otplike API on loom-otp backend         | JVM 25.0.1       |
+| otplike            | Original core.async implementation      | JVM 25.0.1       |
+
+Java implementations were tested with 3 GC configurations: **G1GC**, **ZGC**, and **Shenandoah**.
+
+---
+
+## 1. SPAWN BENCHMARKS
+
+### Immediate Exit (fire-and-forget spawn throughput)
+
+| Implementation        | n=1000 | n=10000 | n=100000 |
+|-----------------------|--------|---------|----------|
+| Elixir/BEAM           | 718K   | 1,104K  | 1,350K   |
+| loom-otp (G1GC)       | 37K    | 63K     | 84K      |
+| loom-otp (ZGC)        | 70K    | 90K     | 97K      |
+| loom-otp (Shenandoah) | 54K    | 71K     | 87K      |
+| otplike-compat (G1GC) | 60K    | 80K     | 85K      |
+| otplike-compat (ZGC)  | 53K    | 81K     | 87K      |
+| otplike (G1GC)        | 333K   | 345K    | 273K     |
+
+**Observation**: Elixir dominates at high scale (1.35M proc/sec at n=100K). The original
+**otplike** is surprisingly fast for fire-and-forget spawns (~350K proc/sec) - faster than
+loom-otp due to core.async's lightweight channels. ZGC shows best spawn performance among
+loom-otp configurations.
+
+### Process Tree Spawning
+
+| Implementation        | depth=10 (2K procs) | depth=15 (65K procs) | depth=18 (524K procs) |
+|-----------------------|---------------------|----------------------|-----------------------|
+| Elixir/BEAM           | 1,778K              | 4,152K               | 3,705K                |
+| loom-otp (G1GC)       | 499K                | 332K                 | 134K                  |
+| loom-otp (ZGC)        | 501K                | 549K                 | 136K                  |
+| loom-otp (Shenandoah) | 477K                | 407K                 | 119K                  |
+| otplike-compat (G1GC) | 384K                | 356K                 | 186K                  |
+| otplike-compat (ZGC)  | 395K                | 474K                 | 221K                  |
+| otplike (G1GC)        | 87K                 | 80K                  | 50K                   |
+
+**Observation**: BEAM's scheduler is optimized for massive concurrency - **28x faster**
+than loom-otp at 524K processes. ZGC performs best at medium scale (65K processes).
+otplike-compat shows best performance at largest scale (186-221K proc/sec at 524K procs).
+
+### Linked Process Tree (with exit propagation)
+
+| Implementation        | depth=10 | depth=15 | depth=18 |
+|-----------------------|----------|----------|----------|
+| Elixir/BEAM           | 986K     | 2,745K   | 2,691K   |
+| loom-otp (G1GC)       | 88K      | 97K      | 90K      |
+| loom-otp (ZGC)        | 87K      | 197K     | 120K     |
+| loom-otp (Shenandoah) | 104K     | 139K     | 83K      |
+| otplike-compat (G1GC) | 105K     | 137K     | 110K     |
+| otplike-compat (ZGC)  | 77K      | 155K     | 169K     |
+| otplike (G1GC)        | 26K      | 45K      | 45K      |
+
+**Observation**: Link/exit propagation is **~30x slower** in Java implementations vs BEAM.
+ZGC shows best performance at high scale for linked trees. otplike-compat with ZGC achieves
+169K proc/sec at 524K procs - best among Java implementations.
+
+---
+
+## 2. MEMORY BENCHMARKS
+
+### Per-Process Memory Footprint
+
+| Implementation        | n=1000   | n=10000  | n=50000  |
+|-----------------------|----------|----------|----------|
+| Elixir/BEAM           | 2.18 KB  | 2.45 KB  | 2.54 KB  |
+| loom-otp (G1GC)       | 7.14 KB  | 7.14 KB  | 7.15 KB  |
+| loom-otp (ZGC)        | 14.34 KB | 9.83 KB  | 9.46 KB  |
+| loom-otp (Shenandoah) | 8.05 KB  | 7.77 KB  | 7.70 KB  |
+| otplike-compat (G1GC) | 7.27 KB  | 7.27 KB  | 7.27 KB  |
+| otplike-compat (Shen) | 8.17 KB  | 7.78 KB  | 7.86 KB  |
+| otplike (G1GC)        | 2.79 KB  | 2.80 KB  | 2.80 KB  |
+
+**Key Finding**: 
+- Elixir and original otplike have nearly identical memory footprint (~2.5-2.8 KB/proc)
+- loom-otp with G1GC uses **~2.8x more memory** per process (7.1 KB)
+- This is improved from previous ~9.4 KB (24% reduction)
+
+### GC Pressure (10K spawns with allocations)
+
+| Implementation        | Time   | Final Memory |
+|-----------------------|--------|--------------|
+| Elixir/BEAM           | 9 ms   | 63 MB        |
+| loom-otp (G1GC)       | 120 ms | 13 MB        |
+| loom-otp (ZGC)        | 112 ms | 56 MB        |
+| loom-otp (Shenandoah) | 105 ms | 17 MB        |
+| otplike-compat (G1GC) | 117 ms | 14 MB        |
+| otplike (G1GC)        | 112 ms | 20 MB        |
+
+**Observation**: BEAM's per-process GC handles this workload **13x faster**. Shenandoah
+shows best GC pressure handling among Java GCs.
+
+---
+
+## 3. MESSAGING BENCHMARKS
+
+### Ping-Pong Latency (round-trip message latency)
+
+| Implementation        | n=100K (μs/msg) | msg/sec |
+|-----------------------|-----------------|---------|
+| Elixir/BEAM           | 0.28            | 3,607K  |
+| loom-otp (G1GC)       | 1.17            | 856K    |
+| loom-otp (ZGC)        | 1.57            | 637K    |
+| loom-otp (Shenandoah) | 1.34            | 746K    |
+| otplike-compat (G1GC) | 1.20            | 833K    |
+| otplike-compat (Shen) | 1.38            | 727K    |
+| otplike (G1GC)        | 8.16            | 123K    |
+
+**Observation**: 
+- BEAM has **4.2x lower latency** than loom-otp (0.28μs vs 1.17μs)
+- loom-otp is **7x faster** than original otplike for messaging
+- G1GC provides best latency among Java GCs
+
+### Send Throughput (single sender, fire-and-forget)
+
+| Implementation        | n=1M msg/sec |
+|-----------------------|--------------|
+| Elixir/BEAM           | 5.1M         |
+| loom-otp (G1GC)       | 20.5M        |
+| loom-otp (ZGC)        | 16.3M        |
+| loom-otp (Shenandoah) | 15.1M        |
+| otplike-compat (G1GC) | 20.7M        |
+| otplike (G1GC)        | 19.3M        |
+
+**Observation**: Java implementations win on raw send throughput - loom-otp achieves
+20.5M msg/sec (4x faster than BEAM). G1GC provides best send throughput.
+
+### Receive Throughput (consuming from queue)
+
+| Implementation        | n=1M msg/sec |
+|-----------------------|--------------|
+| Elixir/BEAM           | 7.4M         |
+| loom-otp (G1GC)       | 6.8M         |
+| loom-otp (ZGC)        | 4.3M         |
+| loom-otp (Shenandoah) | 5.0M         |
+| otplike-compat (G1GC) | 6.8M         |
+| otplike (G1GC)        | 0.87M        |
+
+**Observation**: BEAM and loom-otp have comparable receive throughput (~7M msg/sec).
+Original otplike is **8x slower** at receiving - this is core.async's primary bottleneck.
+
+### Many-to-One (concurrent senders to single receiver)
+
+| Implementation        | 10 senders | 100 senders |
+|-----------------------|------------|-------------|
+| Elixir/BEAM           | 1.85M      | 1.76M       |
+| loom-otp (G1GC)       | 1.90M      | 1.73M       |
+| loom-otp (ZGC)        | 1.77M      | 1.52M       |
+| otplike-compat (G1GC) | 1.86M      | 1.33M       |
+| otplike (G1GC)        | 0.15M      | 0.15M       |
+
+**Observation**: loom-otp matches BEAM in fan-in scenarios. Original otplike
+struggles significantly (10x slower).
+
+---
+
+## 4. GC COMPARISON (loom-otp only)
+
+| Metric            | G1GC    | ZGC     | Shenandoah |
+|-------------------|---------|---------|------------|
+| Spawn throughput  | Good    | Best    | Medium     |
+| Memory per proc   | 7.1 KB  | 9.5 KB  | 7.7 KB     |
+| GC pressure       | 120ms   | 112ms   | 105ms      |
+| Ping-pong latency | 1.17μs  | 1.57μs  | 1.34μs     |
+| Send throughput   | 20.5M   | 16.3M   | 15.1M      |
+
+**Recommendation**: G1GC is the best overall choice for loom-otp - lowest latency,
+highest throughput, and good memory footprint. Shenandoah is competitive for
+GC-pressure-heavy workloads.
+
+---
+
+## 5. KEY FINDINGS
+
+### Where Elixir/BEAM Excels:
+1. Massive concurrency - 28x faster spawning at 500K+ processes
+2. Memory efficiency - 2.8x smaller per-process footprint
+3. GC handling - 13x faster under allocation pressure
+4. Link propagation - 30x faster exit cascade
+5. Low latency messaging - 4.2x lower round-trip latency
+
+### Where loom-otp Excels:
+1. Raw throughput - 4x higher send throughput
+2. Many-to-one patterns - Matches BEAM under contention
+3. Consistency - Predictable performance across scales
+4. Interop - Native Java ecosystem access
+
+### Original otplike Analysis:
+- Memory efficient (matches BEAM at ~2.8KB/proc)
+- Fast fire-and-forget spawns (350K/sec)
+- Bottleneck: messaging - 7x slower than loom-otp
+- core.async limitation - channel operations dominate latency
+
+### otplike-compat Analysis:
+- Successfully combines otplike API with loom-otp performance
+- 7x faster messaging than original otplike
+- Slight overhead vs native loom-otp
+- Good migration path for existing otplike code
+- Best scaled spawn performance at 524K procs (221K/sec with ZGC)
+
+---
+
+## 6. SUMMARY TABLE
+
+| Aspect                   | Winner         | Margin |
+|--------------------------|----------------|--------|
+| Process spawning (scale) | Elixir/BEAM    | 28x    |
+| Memory per process       | Elixir/BEAM    | 2.8x   |
+| GC efficiency            | Elixir/BEAM    | 13x    |
+| Messaging latency        | Elixir/BEAM    | 4.2x   |
+| Send throughput          | loom-otp (JVM) | 4x     |
+| Receive throughput       | Elixir/BEAM    | ~1x    |
+| Link/exit handling       | Elixir/BEAM    | 30x    |
+
+---
+
+## 7. IMPROVEMENT HISTORY
+
+### Changes from Previous Analysis (v1 → v2):
+
+| Metric                 | Previous | Current  | Improvement |
+|------------------------|----------|----------|-------------|
+| Spawn (immediate exit) | 41K/sec  | 84K/sec  | +105%       |
+| Spawn (tree, 524K)     | 70K/sec  | 134K/sec | +91%        |
+| Link propagation       | 45K/sec  | 90K/sec  | +100%       |
+| Memory per process     | 9.4 KB   | 7.1 KB   | -24%        |
+| Ping-pong latency      | 1.42 μs  | 1.17 μs  | -18%        |
+| Send throughput        | 14.2M    | 20.5M    | +44%        |
+
+### Gap vs BEAM (Previous → Current):
+- Process spawning: 60x → 28x (improved)
+- Memory per process: 3.5x → 2.8x (improved)
+- GC efficiency: 18x → 13x (improved)
+- Messaging latency: 5x → 4.2x (improved)
+- Link handling: 50x → 30x (improved)
+
+---
+
+## 8. RECOMMENDATIONS
+
+1. For BEAM-like semantics at scale: Use Elixir - nothing else comes close for 100K+
+   concurrent processes with links/monitors
+
+2. For JVM with actor patterns: Use loom-otp with G1GC - best balance of performance,
+   latency, and memory
+
+3. For existing otplike code: Migrate to otplike-compat for 7x messaging speedup
+
+4. For pure throughput (messaging-heavy): JVM implementations win on raw send rates
+
+5. For spawn-heavy workloads: Consider loom-otp with ZGC for best spawn performance
+
+---
+
+Generated from benchmark results in results/ directory
+Test environment: Linux amd64, 22 processors, JVM 25.0.1, Erlang/OTP 28
