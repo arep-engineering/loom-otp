@@ -1,8 +1,14 @@
-(defproject org.clojars.arep-engineering/loom-otp "1.0.0-SNAPSHOT"
+(defproject org.clojars.arep-engineering/loom-otp "1.0.0"
   :description "Erlang/OTP-style actor concurrency for Clojure using Project Loom virtual threads"
   :url "https://github.com/your-org/loom-otp"
   :license {:name "EPL-1.0"
             :url "https://www.eclipse.org/legal/epl-v10.html"}
+  :deploy-repositories
+  [["clojars"
+    {:url "https://clojars.org/repo"
+     :username "arep-engineering"
+     :password :env/clojars_token
+     :sign-releases false}]]
   :dependencies [[org.clojure/clojure "1.12.0"]
                  [org.clojure/core.match "1.1.0"]
                  [functionalbytes/mount-lite "2.3.2"]]
