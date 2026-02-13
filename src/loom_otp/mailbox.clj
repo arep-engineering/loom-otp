@@ -52,4 +52,6 @@
                                   (deref p timeout-ms :timeout)
                                   (deref p))))
            (maybe-mailbox-receive! mb)
-           timeout-val)))))
+           (do
+             (remove-watch mb watch-key)
+             timeout-val))))))

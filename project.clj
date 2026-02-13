@@ -1,4 +1,4 @@
-(defproject org.clojars.arep-engineering/loom-otp "1.0.0"
+(defproject org.clojars.arep-engineering/loom-otp "1.0.1"
   :description "Erlang/OTP-style actor concurrency for Clojure using Project Loom virtual threads"
   :url "https://github.com/your-org/loom-otp"
   :license {:name "EPL-1.0"
