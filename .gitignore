@@ -9,6 +9,7 @@ pom.xml.asc
 /.lein-*
 /.nrepl-port
 /.prepl-port
-.clj-kondo
+.clj-kondo/.cache
+.clj-kondo/imports
 .lsp
 /.jj

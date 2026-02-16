@@ -1,0 +1,51 @@
+{:hooks
+ {:analyze-call
+  {;; Primary pattern-matching receive macros
+   loom-otp.process.match/receive!           hooks.loom-otp.process.match/receive!
+   loom-otp.process.match/selective-receive! hooks.loom-otp.process.match/selective-receive!
+
+   ;; otplike compat layer delegates to the same macros
+   loom-otp.otplike.process/receive!           hooks.loom-otp.process.match/receive!
+   loom-otp.otplike.process/receive!!          hooks.loom-otp.process.match/receive!
+   loom-otp.otplike.process/selective-receive! hooks.loom-otp.process.match/selective-receive!}}
+
+ :lint-as
+ {;; spawn macros — wrap body in (fn [] body), like clojure.core/future
+  loom-otp.process/spawn!         clojure.core/future
+  loom-otp.process/spawn-link!    clojure.core/future
+  loom-otp.process/spawn-trap!    clojure.core/future
+  loom-otp.process/spawn-monitor! clojure.core/future
+  loom-otp.process/spawn-async!   clojure.core/future
+
+  ;; proc-fn is like fn
+  loom-otp.otplike.process/proc-fn   clojure.core/fn
+  ;; proc-defn is like defn
+  loom-otp.otplike.process/proc-defn  clojure.core/defn
+  loom-otp.otplike.process/proc-defn- clojure.core/defn-
+
+  ;; async/await — body wrappers
+  loom-otp.otplike.process/async   clojure.core/do
+  loom-otp.otplike.process/await!  clojure.core/do
+  loom-otp.otplike.process/await?! clojure.core/do
+
+  ;; with-async — (with-async [binding expr] & body) is like a single-binding let
+  loom-otp.otplike.process/with-async clojure.core/let
+
+  ;; ex-catch — wraps single expr in try/catch
+  loom-otp.otplike.process/ex-catch clojure.core/do
+
+  ;; execute-proc / defn-proc
+  loom-otp.otplike.proc-util/execute-proc   clojure.core/future
+  loom-otp.otplike.proc-util/execute-proc!  clojure.core/future
+  loom-otp.otplike.proc-util/execute-proc!! clojure.core/future
+  loom-otp.otplike.proc-util/defn-proc      clojure.core/defn
+
+  ;; vfuture — like future
+  loom-otp.vfuture/vfuture clojure.core/future
+
+  ;; with-session — wraps body
+  loom-otp.core/with-session clojure.core/future
+
+  ;; test util macros
+  loom-otp.otplike.test-util/def-proc-test    clojure.test/deftest
+  loom-otp.otplike.test-util/await-completion! clojure.core/do}}
